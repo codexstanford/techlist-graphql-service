@@ -1,0 +1,20 @@
+apiVersion: kubedb.com/v1alpha1
+kind: Redis
+metadata:
+  name: redis-lru-cache
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+spec:
+  version: 5.0.3
+  mode: Cluster
+  cluster:
+    master: 3
+    replicas: 1
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  updateStrategy:
+    type: RollingUpdate

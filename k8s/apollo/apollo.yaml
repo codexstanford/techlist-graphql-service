@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql-service
+  labels:
+    app: graphql-service
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: graphql-service
+  template:
+    metadata:
+      labels:
+        app: graphql-service
+    spec:
+      containers:
+        - name: graphql-service
+          image: 196309159802.dkr.ecr.us-west-2.amazonaws.com/techindex:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+              name: http-server
+            - containerPort: 433
+              name: https-server

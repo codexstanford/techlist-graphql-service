@@ -1,0 +1,26 @@
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: builtin-prom-postgres
+spec:
+  version: "11.1"
+  init:
+    scriptSource:
+      gitRepo:
+        repository: "https://github.com/kubedb/postgres-init-scripts.git"
+        directory: "."
+  replicas: 3
+  standbyMode: Hot
+  storageType: Durable
+  envFrom:
+    - configMapRef:
+      name: postgres-config
+  storage:
+    storageClassName: "default"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+  monitor:
+    agent: prometheus.io/builtin

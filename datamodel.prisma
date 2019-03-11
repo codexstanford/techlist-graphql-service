@@ -1,0 +1,82 @@
+type User {
+  id: ID! @unique
+  name: String!
+  email: String
+  phone: String
+  person: Person
+  role: Role! @default(value: "USER")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+type Person {
+  id: ID! @unique
+  avatar: String
+  firstName: String
+  lastName: String
+  email: String
+  twitter: String
+  linkedIn: String
+  affiliations: [Affiliation!]!
+  account: User
+}
+
+type Affiliation {
+  id: ID! @unique
+  person: Person!
+  company: Company!
+  startDate: DateTime!
+  endDate: DateTime
+  role: String
+}
+
+type Company {
+  id: ID! @unique
+  name: String!
+  operatingModels: [CompanyBusinessModel!]!
+  yearFounded: DateTime
+  description: String
+  visible: Boolean
+  targetMarkets: [CompanyTargetMarket!]!
+  location: CompanyLocation
+  cats: [CompanyCategory!]!
+  url: String
+  twitter: String
+  crunchbase: String
+  angellist: String
+  affiliations: [Person!]!
+  admins: [User!]!
+}
+
+type CompanyLocation {
+  id: ID! @unique
+  name: String
+  formatted_address: String
+  googleId: String
+  placeId: String
+  geometry: Json
+  photos: [Json]
+}
+
+type CompanyCategory {
+  id: ID! @unique
+  name: String! @unique
+  parent: CompanyCategory @relation(name: "ParentOnChildCategory")
+  children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
+  companies: [Company!]!
+}
+
+type CompanyTargetMarket {
+  id: ID! @unique
+  name: String! @unique
+  companies: [Company!]!
+}
+
+type CompanyBusinessModel {
+  id: ID! @unique
+  name: String! @unique
+  companies: [Company!]!
+}
