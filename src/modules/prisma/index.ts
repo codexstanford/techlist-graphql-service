@@ -52,7 +52,42 @@ const Query = prismaObjectType({
   name: 'Query',
   definition(t) {
     t.prismaFields(['*']);
+    t.field('me', {
+      type: 'User',
+      resolve: async (parent, args, ctx) => {
+        const { prisma, user } = ctx;
 
+        const me = await ctx.prisma.user({
+          cognitoId: user.sub,
+        });
+
+        if (!me) {
+          const result = await prisma.createUser({
+            cognitoId: user.sub,
+            email: user.email,
+            phone: user.phone_number,
+            name: user['cognito:username'],
+            phone_number_verified: user.phone_number_verified,
+            email_verified: user.email_verified,
+            role: 'USER',
+            person: {
+              create: {
+                email: user.email,
+                phone: user.phone_number,
+                metadata: {
+                  create: {
+                    isPublic: false,
+                  },
+                },
+              },
+            },
+          });
+          
+          return result;
+        }
+        return me;
+      },
+    });
     (t.field('usersConnection', {
       ...t.prismaType.usersConnection,
       resolve(root, args, ctx) {

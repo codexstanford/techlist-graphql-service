@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import ProtectedApolloServer from './apollo';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import { mergeSchemas } from 'graphql-tools';
@@ -9,6 +10,7 @@ import { RedisCache } from 'apollo-server-cache-redis';
 import PrismaSchema from '../modules/prisma';
 import { config } from './config';
 import { prisma } from '../../generated/prisma-client';
+import { getUserId } from '../modules/prisma/utils';
 
 const WS_PORT = 5000;
 
@@ -17,10 +19,11 @@ export const graphqlServer = new ProtectedApolloServer({
     schemas: [PrismaSchema],
   }),
 
-  context: (request) => {
+  context: async (request) => {
     return {
       ...request,
       prisma,
+      user: await getUserId(request),
     };
   },
   introspection: true,
@@ -30,13 +33,14 @@ export const graphqlServer = new ProtectedApolloServer({
     console.log('[ERROR:]', JSON.stringify(error));
     return error;
   },
-  cache: new RedisCache({
-    host:
-      config.environment === 'production'
-        ? `${process.env.REDIS_PRODUCTION}`
-        : `${process.env.REDIS_DEVELOPMENT}`,
-    port: 6379,
-  }),
+
+  // cache: new RedisCache({
+  //   host:
+  //     config.environment === 'production'
+  //       ? `${process.env.REDIS_PRODUCTION}`
+  //       : `${process.env.REDIS_DEVELOPMENT}`,
+  //   port: 6379,
+  // }),
   //   engine: {
   //     apiKey: process.env.ENGINE_API_KEY,
   //     generateClientInfo: ({ request }) => {
@@ -57,6 +61,8 @@ export const graphqlServer = new ProtectedApolloServer({
 });
 
 const app = express();
+
+app.use(cors());
 
 app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 

@@ -42,6 +42,7 @@ export type CompanyBusinessModelConnection = PrismaCompanyBusinessModelConnectio
 };
 
 export interface Context {
-  prisma: Prisma;
+  prisma?: Prisma;
   request: any;
+  user?: any;
 }

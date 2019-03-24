@@ -30,8 +30,9 @@ spec:
             - name: PRISMA_CONFIG
               value: |
                 port: 4466
-                # enableManagementApi: true
-                rabbitUri: amqp://user:password@wrinkled-pike-rabbitmq.default.svc.cluster.local:5672
+                # managementApiSecret: mysecret
+                enableManagementApi: true
+                rabbitUri: "amqp://user:password@wrinkled-pike-rabbitmq.default:5672"
                 databases:
                   default:
                     connector: postgres
@@ -40,7 +41,58 @@ spec:
                     user: postgres
                     password: g-e9c2m3WzNGiE1P
                     migrations: true
-          image: prismagraphql/prisma:1.27
+          image: prismagraphql/prisma-prod:1.29.1
+          name: prisma-master
+          ports:
+            - containerPort: 4466
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o k8s
+    kompose.version: 1.18.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: prisma
+    name: prisma
+    app: prisma
+  name: prisma-slave
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prisma
+        name: prisma
+        app: prisma
+    spec:
+      containers:
+        - env:
+            - name: PRISMA_CONFIG
+              value: |
+                port: 4466
+                enableManagementApi: false
+                # managementApiSecret: mysecret
+                rabbitUri: "amqp://user:password@wrinkled-pike-rabbitmq.default:5672"
+                databases:
+                  default:
+                    connector: postgres
+                    host: builtin-prom-postgres
+                    port: 5432
+                    user: postgres
+                    password: g-e9c2m3WzNGiE1P
+                    migrations: true
+          image: prismagraphql/prisma-prod:1.29.1
           name: prisma
           ports:
             - containerPort: 4466

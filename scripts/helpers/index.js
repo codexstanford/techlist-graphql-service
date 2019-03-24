@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const seedMutations = (mutations) => `mutation { ${mutations} }`;
 
@@ -25,8 +26,6 @@ const parseCompanyTargetMarkets = (type) => {
 };
 
 const parseCompanyCategories = (category) => {
-  console.log(category);
-
   const categories = [];
   let cat = category;
 
@@ -40,7 +39,6 @@ const parseCompanyCategories = (category) => {
     .join('_')
     .toUpperCase();
 
-  console.log(cat);
   const result = cat
     .split('::')
     .filter((item) => item !== '_-')

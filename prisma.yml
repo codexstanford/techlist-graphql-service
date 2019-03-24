@@ -1,10 +1,10 @@
 endpoint: http://prisma.default:4466/test/prod
 datamodel: datamodel.prisma
+
 generate:
   - generator: typescript-client
     output: ./generated/prisma-client/
 hooks:
-  pre-deploy:
   post-deploy:
     - prisma generate
     - npx nexus-prisma-generate --client ./generated/prisma-client --output ./generated/nexus-prisma

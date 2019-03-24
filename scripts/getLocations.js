@@ -20,7 +20,7 @@ const askGoogleForLocation = async (data) => {
   const result = await init.json();
 
   if (result.status !== 'OK') {
-    console.log(`NON-OK STATUS '${result.status}' for ${data.name}`);
+    // console.log(`NON-OK STATUS '${result.status}' for ${data.name}`);
     return null;
   }
 

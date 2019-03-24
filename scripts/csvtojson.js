@@ -10,6 +10,7 @@ const { execute, makePromise } = require('apollo-link');
 const { askGoogleForLocation } = require('./getLocations');
 const csv = require('csvtojson/v2');
 const {
+  mapCompanyType,
   parseCompanyCategories,
   parseCompanyFoundedDate,
   parseCompanyTargetMarkets,
@@ -24,8 +25,10 @@ migrateCSVDataToPrisma();
 async function migrateCSVDataToPrisma() {
   const json = await csv().fromFile(CSV_PATH);
   const cos = Object.keys(json);
+  console.log('Total Items:', json.length);
 
   for (const i in cos) {
+    console.log(`Migrating company ${i} of ${json.length}`);
     const company = json[i];
     const location = await askGoogleForLocation(company);
 
@@ -59,6 +62,17 @@ async function migrateCSVDataToPrisma() {
           twitter: parseCompanyURL(company.twitter_url),
           crunchbase: parseCompanyURL(company.crunchbase_url),
           angellist: parseCompanyURL(company.angellist_url),
+          metadata: {
+            create: {
+              isDraft: false,
+              isPublic: company.visible === 'TRUE' ? true : false,
+            },
+          },
+          contact: {
+            create: {
+              urlWebsite: parseCompanyURL(company.main_url),
+            },
+          },
         },
       },
     };
@@ -66,9 +80,9 @@ async function migrateCSVDataToPrisma() {
       .then(({ data, errors }) => {
         if (errors) {
           errors.forEach((e) => {
-            console.error(e);
+            console.error('ERROR:', e);
           });
-          console.log(operation);
+          console.log('OPERATION:', operation);
         }
       })
       .catch((error) => {
