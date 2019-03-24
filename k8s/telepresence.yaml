@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: myservice
+spec:
+  replicas: 1 # only one replica
+  template:
+    metadata:
+      labels:
+        name: myservice
+    spec:
+      containers:
+        - name: myservice
+          image: datawire/telepresence-k8s:0.97 # new image

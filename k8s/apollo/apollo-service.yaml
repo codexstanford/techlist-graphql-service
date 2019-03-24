@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: graphql-service
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-west-2:196309159802:certificate/14842aab-ead4-40aa-9ed9-7bde46ef8282"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+spec:
+  selector:
+    app: graphql-service
+  ports:
+    - port: 80
+      name: http
+      targetPort: http-server
+    - port: 443
+      protocol: TCP
+      name: https
+      targetPort: https-server
+  type: LoadBalancer

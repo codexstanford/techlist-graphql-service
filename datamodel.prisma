@@ -1,0 +1,162 @@
+type User {
+  id: ID! @unique
+  name: String
+  email: String
+  phone: String
+  phone_number_verified: Boolean! @default(value: false)
+  email_verified: Boolean! @default(value: false)
+  person: Person
+  handle: String @unique
+  cognitoId: String! @unique
+  role: Role! @default(value: "USER")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+type Person {
+  id: ID! @unique
+  email: String @unique
+  phone: String @unique
+  account: User
+  profile: PersonProfile
+  affiliations: [Affiliation!]!
+  metadata: MetaDataItem!
+}
+
+type PersonProfileSkills {
+  id: ID! @unique
+  name: String
+  profiles: [PersonProfile!]!
+}
+
+type PersonProfile {
+  id: ID! @unique
+  person: Person!
+  firstName: String
+  lastName: String
+  avatar: String
+  title: String
+  headline: String
+  location: String
+  email: [ExternalEmail!]!
+  links: [ExternalLink!]!
+  skils: [PersonProfileSkills!]!
+}
+
+type ExternalEmail {
+  id: ID! @unique
+  address: String!
+  type: String
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+}
+
+type ExternalLink {
+  id: ID! @unique
+  url: String
+  type: String
+  isPublic: Boolean @default(value: true)
+}
+
+type Affiliation {
+  id: ID! @unique
+  person: Person!
+  company: Company!
+  startDate: DateTime!
+  endDate: DateTime
+  role: String
+}
+
+type Company {
+  id: ID! @unique
+  name: String!
+  operatingModels: [CompanyBusinessModel!]!
+  yearFounded: DateTime
+  description: String
+  visible: Boolean
+  targetMarkets: [CompanyTargetMarket!]!
+  location: CompanyLocation
+  cats: [CompanyCategory!]!
+  url: String
+  twitter: String
+  crunchbase: String
+  angellist: String
+  affiliations: [Person!]!
+  admins: [User!]!
+  contact: ContactDataCompany!
+  metadata: MetaDataItem!
+  logo: String
+  shortDescription: String
+  fullDescription: String
+}
+
+type CompanyLocation {
+  id: ID! @unique
+  name: String
+  formatted_address: String
+  googleId: String
+  placeId: String
+  geometry: Json
+  photos: [Json]
+}
+
+type CompanyCategory {
+  id: ID! @unique
+  name: String! @unique
+  parent: CompanyCategory @relation(name: "ParentOnChildCategory")
+  children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
+  companies: [Company!]!
+}
+
+type CompanyTargetMarket {
+  id: ID! @unique
+  name: String! @unique
+  companies: [Company!]!
+}
+
+type CompanyBusinessModel {
+  id: ID! @unique
+  name: String! @unique
+  companies: [Company!]!
+}
+
+type ContactDataCompany {
+  id: ID! @unique
+  urlPrivacyPolicy: String
+  urlSupport: String
+  urlSales: String
+  urlTermsOfService: String
+  urlTwitter: String
+  urlLinkedIn: String
+  urlFacebook: String
+  urlCrunchbase: String
+  urlAngellist: String
+  urlWebsite: String
+  emailSales: String
+  emailSupport: String
+}
+
+type MetaDataItem {
+  id: ID! @unique
+  isDraft: Boolean! @default(value: true)
+  isPublic: Boolean! @default(value: false)
+  isRejected: Boolean! @default(value: false)
+  isUnverified: Boolean! @default(value: true)
+  isVerified: Boolean! @default(value: false)
+  isApproved: Boolean! @default(value: false)
+  isPendingReview: Boolean! @default(value: false)
+}
+
+# type MetaDataViewer {
+#   id: ID! @unique
+#   viewerCanEdit: Boolean! @default(value: false)
+#   viewerCanApprove: Boolean! @default(value: false)
+#   viewerCanDelete: Boolean! @default(value: false)
+#   viewerCanRequestApproval: Boolean! @default(value: false)
+#   viewerCanReject: Boolean! @default(value: false)
+#   viewerIsAffiliated: Boolean! @default(value: false)
+#   viewerIsBlocked: Boolean! @default(value: false)
+# }
