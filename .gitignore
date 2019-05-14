@@ -5,3 +5,4 @@ generated
 telepresence.log
 aws
 seed
+.DS_Store
