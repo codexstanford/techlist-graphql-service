@@ -20,7 +20,7 @@ services:
             port: 5432
             migrations: true
   postgres:
-    image: postgres
+    image: postgres:10.3
     restart: always
     # Uncomment the next two lines to connect to your your database from outside the Docker environment, e.g. using a database GUI like Postico
     # ports:
@@ -30,22 +30,23 @@ services:
       POSTGRES_PASSWORD: prisma
     volumes:
       - postgres:/var/lib/postgresql/data
-  apollo:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    image: 196309159802.dkr.ecr.us-west-2.amazonaws.com/techindex:latest
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: always
-    ports:
-      - "4000:4000"
-    command: ["yarn", "dev"]
-    environment:
-      - RHOST=redis
-    depends_on:
-      - redis
+  # apollo:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #   image: 196309159802.dkr.ecr.us-west-2.amazonaws.com/techindex:latest
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   restart: always
+  #   ports:
+  #     - "4000:4000"
+  #   command: ["yarn", "dev"]
+  #   environment:
+  #     - RHOST=redis
+  #   depends_on:
+  #     - redis
+  #     - prisma
   redis:
     image: redis:alpine
     command: ["redis-server", "--appendonly", "yes"]

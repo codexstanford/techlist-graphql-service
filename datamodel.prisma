@@ -1,14 +1,14 @@
 type User {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String
   email: String
   phone: String
   phone_number_verified: Boolean! @default(value: false)
   email_verified: Boolean! @default(value: false)
-  person: Person
+  person: Person @relation(link: TABLE)
   handle: String @unique
   cognitoId: String! @unique
-  role: Role! @default(value: "USER")
+  role: Role! @default(value: USER)
 }
 
 enum Role {
@@ -17,37 +17,36 @@ enum Role {
 }
 
 type Person {
-  id: ID! @unique
+  id: ID! @unique @id
   email: String @unique
   phone: String @unique
-  account: User
-  profile: PersonProfile
-  affiliations: [Affiliation!]!
-  metadata: MetaDataItem!
+  account: User 
+  profile: PersonProfile 
+  affiliations: [Affiliation!]! 
+  metadata: MetaDataItem! 
 }
 
 type PersonProfileSkills {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String
-  profiles: [PersonProfile!]!
+  profiles: [PersonProfile!]! @relation(link: TABLE)
 }
-
 type PersonProfile {
-  id: ID! @unique
-  person: Person!
+  id: ID! @unique @id
+  person: Person! @relation(link: TABLE)
   firstName: String
   lastName: String
   avatar: String
   title: String
   headline: String
   location: String
-  email: [ExternalEmail!]!
-  links: [ExternalLink!]!
-  skils: [PersonProfileSkills!]!
+  email: [ExternalEmail!]! @relation(link: TABLE)
+  links: [ExternalLink!]! @relation(link: TABLE)
+  skils: [PersonProfileSkills!]! 
 }
 
 type ExternalEmail {
-  id: ID! @unique
+  id: ID! @unique @id
   address: String!
   type: String
   isPrimary: Boolean @default(value: false)
@@ -55,23 +54,23 @@ type ExternalEmail {
 }
 
 type ExternalLink {
-  id: ID! @unique
+  id: ID! @unique @id
   url: String
   type: String
   isPublic: Boolean @default(value: true)
 }
 
 type Affiliation {
-  id: ID! @unique
-  person: Person!
-  company: Company!
+  id: ID! @unique @id
+  person: Person! @relation(link: TABLE)
+  company: Company! @relation(link: TABLE)
   startDate: DateTime!
   endDate: DateTime
   role: String
 }
 
 type Company {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String!
   operatingModels: [CompanyBusinessModel!]!
   yearFounded: DateTime
@@ -94,17 +93,17 @@ type Company {
 }
 
 type CompanyLocation {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String
   formatted_address: String
   googleId: String
   placeId: String
   geometry: Json
-  photos: [Json]
+  
 }
 
 type CompanyCategory {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String! @unique
   parent: CompanyCategory @relation(name: "ParentOnChildCategory")
   children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
@@ -112,19 +111,19 @@ type CompanyCategory {
 }
 
 type CompanyTargetMarket {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String! @unique
   companies: [Company!]!
 }
 
 type CompanyBusinessModel {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String! @unique
   companies: [Company!]!
 }
 
 type ContactDataCompany {
-  id: ID! @unique
+  id: ID! @unique @id
   urlPrivacyPolicy: String
   urlSupport: String
   urlSales: String
@@ -140,7 +139,7 @@ type ContactDataCompany {
 }
 
 type MetaDataItem {
-  id: ID! @unique
+  id: ID! @unique @id
   isDraft: Boolean! @default(value: true)
   isPublic: Boolean! @default(value: false)
   isRejected: Boolean! @default(value: false)
