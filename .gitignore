@@ -4,5 +4,4 @@ generated
 .env
 telepresence.log
 aws
-seed
 .DS_Store
