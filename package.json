@@ -43,7 +43,8 @@
     "deploy": "npx prisma deploy",
     "dev": "ts-node-dev --no-notify --respawn --transpileOnly ./src/",
     "kompose": "rimraf dist && rimraf node_modules && kompose up",
-    "serve": "pm2-runtime start pm2.json"
+    "serve": "pm2-runtime start pm2.json",
+    "migrate": "npx prisma deploy && npx prisma reset --force && node scripts/getCategories.js && node scripts/csvtojson.js && yarn dev"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",

@@ -5,7 +5,7 @@ type User {
   phone: String
   phone_number_verified: Boolean! @default(value: false)
   email_verified: Boolean! @default(value: false)
-  person: Person @relation(link: TABLE)
+  person: Person @relation(link: TABLE, name: "PersonOnUser")
   handle: String @unique
   cognitoId: String! @unique
   role: Role! @default(value: USER)
@@ -20,8 +20,8 @@ type Person {
   id: ID! @unique @id
   email: String @unique
   phone: String @unique
-  account: User 
-  profile: PersonProfile 
+  account: User @relation(link: TABLE, name: "AccountOnPerson")
+  profile: PersonProfile @relation(link: TABLE, name: "PersonOnProfile")
   affiliations: [Affiliation!]! 
   metadata: MetaDataItem! 
 }
@@ -29,11 +29,11 @@ type Person {
 type PersonProfileSkills {
   id: ID! @unique @id
   name: String
-  profiles: [PersonProfile!]! @relation(link: TABLE)
+  profiles: [PersonProfile!]! 
 }
 type PersonProfile {
   id: ID! @unique @id
-  person: Person! @relation(link: TABLE)
+  person: Person! @relation(name: "PersonOnProfile")
   firstName: String
   lastName: String
   avatar: String
@@ -42,7 +42,7 @@ type PersonProfile {
   location: String
   email: [ExternalEmail!]! @relation(link: TABLE)
   links: [ExternalLink!]! @relation(link: TABLE)
-  skils: [PersonProfileSkills!]! 
+  skils: [PersonProfileSkills!]! @relation(link: TABLE)
 }
 
 type ExternalEmail {
@@ -72,21 +72,21 @@ type Affiliation {
 type Company {
   id: ID! @unique @id
   name: String!
-  operatingModels: [CompanyBusinessModel!]!
+  operatingModels: [CompanyBusinessModel!]! @relation(link: TABLE, name: "OperatingModelOnCompany")
   yearFounded: DateTime
   description: String
   visible: Boolean
-  targetMarkets: [CompanyTargetMarket!]!
-  location: CompanyLocation
-  cats: [CompanyCategory!]!
+  targetMarkets: [CompanyTargetMarket!]! @relation(link: TABLE, name: "MarketsOnCompany")
+  location: CompanyLocation @relation(link: TABLE, name: "LocationOnCompany")
+  cats: [CompanyCategory!]! @relation(link: TABLE, name: "CategoryOnCompany")
   url: String
   twitter: String
   crunchbase: String
   angellist: String
-  affiliations: [Person!]!
-  admins: [User!]!
-  contact: ContactDataCompany!
-  metadata: MetaDataItem!
+  affiliations: [Person!]! @relation(link: TABLE, name: "AffiliationOnCompany")
+  admins: [User!]! @relation(link: TABLE, name: "AdminOnCompany")
+  contact: ContactDataCompany! @relation(link: TABLE, name:"ContactDataOnCompan")
+  metadata: MetaDataItem! @relation(link: TABLE, name: "MetaDataOnCompany")
   logo: String
   shortDescription: String
   fullDescription: String
@@ -94,12 +94,21 @@ type Company {
 
 type CompanyLocation {
   id: ID! @unique @id
+  company: Company! @relation(name: "LocationOnCompany")
   name: String
   formatted_address: String
   googleId: String
   placeId: String
   geometry: Json
-  
+  photos: Json
+}
+
+type CompanyPhoto {
+  id: ID! @id
+  height: Int
+  photo_reference: String
+  width: Int
+  html_attributions: Json
 }
 
 type CompanyCategory {
@@ -107,19 +116,19 @@ type CompanyCategory {
   name: String! @unique
   parent: CompanyCategory @relation(name: "ParentOnChildCategory")
   children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
-  companies: [Company!]!
+  companies: [Company!]! @relation(name: "CategoryOnCompany")
 }
 
 type CompanyTargetMarket {
   id: ID! @unique @id
   name: String! @unique
-  companies: [Company!]!
+  companies: [Company!]! @relation(name: "MarketsOnCompany")
 }
 
 type CompanyBusinessModel {
   id: ID! @unique @id
   name: String! @unique
-  companies: [Company!]!
+  companies: [Company!]! @relation(name: "OperatingModelOnCompany")
 }
 
 type ContactDataCompany {

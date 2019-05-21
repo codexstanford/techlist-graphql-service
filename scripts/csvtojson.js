@@ -26,9 +26,11 @@ async function migrateCSVDataToPrisma() {
   const json = await csv().fromFile(CSV_PATH);
   const cos = Object.keys(json);
   console.log('Total Items:', json.length);
+  const temp = cos.slice(0, 100);
 
-  for (const i in cos) {
-    console.log(`Migrating company ${i} of ${json.length}`);
+  for (const i in temp) {
+    console.clear();
+    console.log(`Migrating company ${i} of ${temp.length}`);
     const company = json[i];
     const location = await askGoogleForLocation(company);
 
@@ -82,7 +84,7 @@ async function migrateCSVDataToPrisma() {
           errors.forEach((e) => {
             console.error('ERROR:', e);
           });
-          console.log('OPERATION:', operation);
+          // console.log('OPERATION:', operation);
         }
       })
       .catch((error) => {

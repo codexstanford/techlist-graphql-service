@@ -1,4 +1,4 @@
-endpoint: http://localhost:4466/test/prod
+endpoint: http://localhost:4466/dev/one
 datamodel: datamodel.prisma
 
 generate:
@@ -9,5 +9,3 @@ hooks:
     - prisma generate
     - npx nexus-prisma-generate --client ./generated/prisma-client --output ./generated/nexus-prisma
 
-seed:
-  import: seed/seed.graphql

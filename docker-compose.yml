@@ -1,8 +1,10 @@
-version: "3"
+version: "3.7"
 services:
   prisma:
-    image: prismagraphql/prisma:1.32
-    restart: always
+    image: prismagraphql/prisma:1.33
+    restart: unless-stopped
+    networks: 
+      - backend
     ports:
     - "4466:4466"
     environment:
@@ -21,27 +23,45 @@ services:
             migrations: true
   postgres:
     image: postgres:10.3
-    restart: always
+    restart: unless-stopped
     # Uncomment the next two lines to connect to your your database from outside the Docker environment, e.g. using a database GUI like Postico
-    # ports:
-    # - "5432:5432"
+    ports:
+     - "5432:5432"
     environment:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
+      PGDATA: /data/postgres
+    networks: 
+      - backend
     volumes:
       - postgres:/var/lib/postgresql/data
+  pgadmin:
+    container_name: "pgadmin_container"
+    image: dpage/pgadmin4
+    volumes:
+      - pgadmin:/root/.pgadmin
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: "dba@fabulas.io"
+      PGADMIN_DEFAULT_PASSWORD: "dba"
+      SERVER_PORT: 5050
+    ports:
+      - "5050:80"
+    networks:
+      - backend
+    restart: unless-stopped
   # apollo:
   #   build:
   #     context: .
   #     dockerfile: ./Dockerfile
-  #   image: 196309159802.dkr.ecr.us-west-2.amazonaws.com/techindex:latest
   #   volumes:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules
-  #   restart: always
+  #   restart: unless-stopped
+  #   networks:
+  #     - backend
   #   ports:
   #     - "4000:4000"
-  #   command: ["yarn", "dev"]
+  #   command: ["yarn", "migrate"]
   #   environment:
   #     - RHOST=redis
   #   depends_on:
@@ -51,7 +71,9 @@ services:
     image: redis:alpine
     command: ["redis-server", "--appendonly", "yes"]
     hostname: redis
-    restart: always
+    restart: unless-stopped
+    networks: 
+      - backend
     ports:
       - "6379:6379"
     volumes:
@@ -64,3 +86,8 @@ services:
 volumes:
   redis:
   postgres:
+  pgadmin:
+
+networks:
+  backend: 
+    driver: bridge
