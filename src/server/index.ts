@@ -33,6 +33,7 @@ export const graphqlServer = new ProtectedApolloServer({
     console.log('[ERROR:]', JSON.stringify(error));
     return error;
   },
+  debug: true
 
   // cache: new RedisCache({
   //   host:
