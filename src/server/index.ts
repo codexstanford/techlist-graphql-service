@@ -11,6 +11,7 @@ import PrismaSchema from '../modules/prisma';
 import { config } from './config';
 import { prisma } from '../../generated/prisma-client';
 import { getUserId } from '../modules/prisma/utils';
+import bodyParser from 'body-parser';
 
 const WS_PORT = 5000;
 
@@ -33,7 +34,7 @@ export const graphqlServer = new ProtectedApolloServer({
     console.log('[ERROR:]', JSON.stringify(error));
     return error;
   },
-  debug: true
+  debug: true,
 
   // cache: new RedisCache({
   //   host:
@@ -66,6 +67,9 @@ const app = express();
 app.use(cors());
 
 app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 graphqlServer.applyMiddleware({ app, path: '/' });
 
