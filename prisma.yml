@@ -4,6 +4,8 @@ datamodel: datamodel.prisma
 generate:
   - generator: typescript-client
     output: ./generated/prisma-client/
+  - generator: javascript-client
+    output: ./generated/prisma-client-js/
 hooks:
   post-deploy:
     - prisma generate
