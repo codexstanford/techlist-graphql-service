@@ -1,0 +1,170 @@
+type User {
+  id: ID! @unique @id
+  name: String
+  email: String
+  phone: String
+  phone_number_verified: Boolean! @default(value: false)
+  email_verified: Boolean! @default(value: false)
+  person: Person @relation(link: TABLE, name: "PersonOnUser")
+  handle: String 
+  cognitoId: String! @unique
+  role: Role! @default(value: USER)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+type Person {
+  id: ID! @unique @id
+  email: String 
+  phone: String 
+  account: User @relation(link: TABLE, name: "AccountOnPerson")
+  profile: PersonProfile @relation(link: TABLE, name: "PersonOnProfile")
+  affiliations: [Affiliation!]! 
+  metadata: MetaDataItem! 
+}
+
+type PersonProfileSkills {
+  id: ID! @unique @id
+  name: String
+  profiles: [PersonProfile!]! 
+}
+type PersonProfile {
+  id: ID! @unique @id
+  person: Person! @relation(name: "PersonOnProfile")
+  firstName: String
+  lastName: String
+  avatar: String
+  title: String
+  headline: String
+  location: String
+  email: [ExternalEmail!]! @relation(link: TABLE)
+  links: [ExternalLink!]! @relation(link: TABLE)
+  skils: [PersonProfileSkills!]! @relation(link: TABLE)
+}
+
+type ExternalEmail {
+  id: ID! @unique @id
+  address: String!
+  type: String
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+}
+
+type ExternalLink {
+  id: ID! @unique @id
+  url: String
+  type: String
+  isPublic: Boolean @default(value: true)
+}
+
+type Affiliation {
+  id: ID! @unique @id
+  person: Person! @relation(link: TABLE)
+  company: Company! @relation(link: TABLE)
+  startDate: DateTime!
+  endDate: DateTime
+  role: String
+}
+
+type Company {
+  id: ID! @unique @id
+  name: String!
+  operatingModels: [CompanyBusinessModel!]! @relation(link: TABLE, name: "OperatingModelOnCompany")
+  yearFounded: DateTime
+  description: String
+  visible: Boolean
+  targetMarkets: [CompanyTargetMarket!]! @relation(link: TABLE, name: "MarketsOnCompany")
+  location: CompanyLocation @relation(link: TABLE, name: "LocationOnCompany")
+  cats: [CompanyCategory!]! @relation(link: TABLE, name: "CategoryOnCompany")
+  url: String
+  twitter: String
+  crunchbase: String
+  angellist: String
+  affiliations: [Person!]! @relation(link: TABLE, name: "AffiliationOnCompany")
+  admins: [User!]! @relation(link: TABLE, name: "AdminOnCompany")
+  contact: ContactDataCompany! @relation(link: TABLE, name:"ContactDataOnCompan")
+  metadata: MetaDataItem! @relation(link: TABLE, name: "MetaDataOnCompany")
+  logo: String
+  shortDescription: String
+  fullDescription: String
+}
+
+type CompanyLocation {
+  id: ID! @unique @id
+  company: Company! @relation(name: "LocationOnCompany")
+  name: String
+  formatted_address: String
+  googleId: String
+  placeId: String
+  geometry: Json
+  photos: Json
+}
+
+type CompanyPhoto {
+  id: ID! @id
+  height: Int
+  photo_reference: String
+  width: Int
+  html_attributions: Json
+}
+
+type CompanyCategory {
+  id: ID! @unique @id
+  name: String! @unique
+  parent: CompanyCategory @relation(name: "ParentOnChildCategory")
+  children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
+  companies: [Company!]! @relation(name: "CategoryOnCompany")
+}
+
+type CompanyTargetMarket {
+  id: ID! @unique @id
+  name: String! @unique
+  companies: [Company!]! @relation(name: "MarketsOnCompany")
+}
+
+type CompanyBusinessModel {
+  id: ID! @unique @id
+  name: String! @unique
+  companies: [Company!]! @relation(name: "OperatingModelOnCompany")
+}
+
+type ContactDataCompany {
+  id: ID! @unique @id
+  urlPrivacyPolicy: String
+  urlSupport: String
+  urlSales: String
+  urlTermsOfService: String
+  urlTwitter: String
+  urlLinkedIn: String
+  urlFacebook: String
+  urlCrunchbase: String
+  urlAngellist: String
+  urlWebsite: String
+  emailSales: String
+  emailSupport: String
+}
+
+type MetaDataItem {
+  id: ID! @unique @id
+  isDraft: Boolean! @default(value: true)
+  isPublic: Boolean! @default(value: false)
+  isRejected: Boolean! @default(value: false)
+  isUnverified: Boolean! @default(value: true)
+  isVerified: Boolean! @default(value: false)
+  isApproved: Boolean! @default(value: false)
+  isPendingReview: Boolean! @default(value: false)
+}
+
+# type MetaDataViewer {
+#   id: ID! @unique
+#   viewerCanEdit: Boolean! @default(value: false)
+#   viewerCanApprove: Boolean! @default(value: false)
+#   viewerCanDelete: Boolean! @default(value: false)
+#   viewerCanRequestApproval: Boolean! @default(value: false)
+#   viewerCanReject: Boolean! @default(value: false)
+#   viewerIsAffiliated: Boolean! @default(value: false)
+#   viewerIsBlocked: Boolean! @default(value: false)
+# }

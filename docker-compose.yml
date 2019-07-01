@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   prisma:
-    image: prismagraphql/prisma:1.33
+    image: prismagraphql/prisma:1.34
     restart: unless-stopped
     networks: 
       - backend
@@ -18,6 +18,9 @@ services:
             host: postgres
             user: prisma
             password: prisma
+            # host: 34.66.96.17
+            # user: postgres
+            # password: 5sabEOeGrg4IeKOa
             rawAccess: true
             port: 5432
             migrations: true
@@ -28,6 +31,8 @@ services:
     ports:
      - "5432:5432"
     environment:
+      # POSTGRES_USER: postgres
+      # POSTGRES_PASSWORD: 5sabEOeGrg4IeKOa
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
       PGDATA: /data/postgres
@@ -36,7 +41,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
   pgadmin:
-    container_name: "pgadmin_container"
+    container_name: "pgadmin_container-stanford"
     image: dpage/pgadmin4
     volumes:
       - pgadmin:/root/.pgadmin

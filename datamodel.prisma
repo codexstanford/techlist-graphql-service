@@ -1,154 +1,22 @@
-type User {
-  id: ID! @unique @id
-  name: String
-  email: String
-  phone: String
-  phone_number_verified: Boolean! @default(value: false)
-  email_verified: Boolean! @default(value: false)
-  person: Person @relation(link: TABLE, name: "PersonOnUser")
-  handle: String 
-  cognitoId: String! @unique
-  role: Role! @default(value: USER)
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
 type Person {
-  id: ID! @unique @id
-  email: String 
-  phone: String 
-  account: User @relation(link: TABLE, name: "AccountOnPerson")
-  profile: PersonProfile @relation(link: TABLE, name: "PersonOnProfile")
-  affiliations: [Affiliation!]! 
-  metadata: MetaDataItem! 
-}
-
-type PersonProfileSkills {
-  id: ID! @unique @id
-  name: String
-  profiles: [PersonProfile!]! 
-}
-type PersonProfile {
-  id: ID! @unique @id
-  person: Person! @relation(name: "PersonOnProfile")
-  firstName: String
-  lastName: String
-  avatar: String
-  title: String
-  headline: String
-  location: String
-  email: [ExternalEmail!]! @relation(link: TABLE)
-  links: [ExternalLink!]! @relation(link: TABLE)
-  skils: [PersonProfileSkills!]! @relation(link: TABLE)
-}
-
-type ExternalEmail {
-  id: ID! @unique @id
-  address: String!
-  type: String
-  isPrimary: Boolean @default(value: false)
-  isPublic: Boolean @default(value: true)
-}
-
-type ExternalLink {
-  id: ID! @unique @id
-  url: String
-  type: String
-  isPublic: Boolean @default(value: true)
-}
-
-type Affiliation {
-  id: ID! @unique @id
-  person: Person! @relation(link: TABLE)
-  company: Company! @relation(link: TABLE)
-  startDate: DateTime!
-  endDate: DateTime
-  role: String
-}
-
-type Company {
-  id: ID! @unique @id
-  name: String!
-  operatingModels: [CompanyBusinessModel!]! @relation(link: TABLE, name: "OperatingModelOnCompany")
-  yearFounded: DateTime
-  description: String
-  visible: Boolean
-  targetMarkets: [CompanyTargetMarket!]! @relation(link: TABLE, name: "MarketsOnCompany")
-  location: CompanyLocation @relation(link: TABLE, name: "LocationOnCompany")
-  cats: [CompanyCategory!]! @relation(link: TABLE, name: "CategoryOnCompany")
-  url: String
-  twitter: String
-  crunchbase: String
-  angellist: String
-  affiliations: [Person!]! @relation(link: TABLE, name: "AffiliationOnCompany")
-  admins: [User!]! @relation(link: TABLE, name: "AdminOnCompany")
-  contact: ContactDataCompany! @relation(link: TABLE, name:"ContactDataOnCompan")
-  metadata: MetaDataItem! @relation(link: TABLE, name: "MetaDataOnCompany")
-  logo: String
-  shortDescription: String
-  fullDescription: String
-}
-
-type CompanyLocation {
-  id: ID! @unique @id
-  company: Company! @relation(name: "LocationOnCompany")
-  name: String
-  formatted_address: String
-  googleId: String
-  placeId: String
-  geometry: Json
-  photos: Json
-}
-
-type CompanyPhoto {
   id: ID! @id
-  height: Int
-  photo_reference: String
-  width: Int
-  html_attributions: Json
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  name: [PersonName!]! @relation(link: TABLE, name: "NameOnPerson")
+  avatar: [PersonAvatar!]! @relation(link: TABLE, name: "AvatarOnPerson")
+  email: [PartyEmail!]! @relation(link: TABLE, name: "EmailOnPerson")
+  phone: [PartyPhone!]! @relation(link: TABLE, name: "PhoneOnPerson")
+  affiliation: [PersonOrganizationAffiliation!]! @relation(link: TABLE, name: "AffiliationOnPerson")
+  personalTitle: String
+  account: PartyAccount @relation(link: INLINE) 
+  metadata: PersonMetaData! @relation(link: INLINE, name: "MetaDataOnPerson")
 }
 
-type CompanyCategory {
+type PersonMetaData {
   id: ID! @unique @id
-  name: String! @unique
-  parent: CompanyCategory @relation(name: "ParentOnChildCategory")
-  children: [CompanyCategory!]! @relation(name: "ChildrenOnParentCategory")
-  companies: [Company!]! @relation(name: "CategoryOnCompany")
-}
-
-type CompanyTargetMarket {
-  id: ID! @unique @id
-  name: String! @unique
-  companies: [Company!]! @relation(name: "MarketsOnCompany")
-}
-
-type CompanyBusinessModel {
-  id: ID! @unique @id
-  name: String! @unique
-  companies: [Company!]! @relation(name: "OperatingModelOnCompany")
-}
-
-type ContactDataCompany {
-  id: ID! @unique @id
-  urlPrivacyPolicy: String
-  urlSupport: String
-  urlSales: String
-  urlTermsOfService: String
-  urlTwitter: String
-  urlLinkedIn: String
-  urlFacebook: String
-  urlCrunchbase: String
-  urlAngellist: String
-  urlWebsite: String
-  emailSales: String
-  emailSupport: String
-}
-
-type MetaDataItem {
-  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  person: Person! @relation(name: "MetaDataOnPerson")
   isDraft: Boolean! @default(value: true)
   isPublic: Boolean! @default(value: false)
   isRejected: Boolean! @default(value: false)
@@ -158,13 +26,256 @@ type MetaDataItem {
   isPendingReview: Boolean! @default(value: false)
 }
 
-# type MetaDataViewer {
-#   id: ID! @unique
-#   viewerCanEdit: Boolean! @default(value: false)
-#   viewerCanApprove: Boolean! @default(value: false)
-#   viewerCanDelete: Boolean! @default(value: false)
-#   viewerCanRequestApproval: Boolean! @default(value: false)
-#   viewerCanReject: Boolean! @default(value: false)
-#   viewerIsAffiliated: Boolean! @default(value: false)
-#   viewerIsBlocked: Boolean! @default(value: false)
-# }
+type PersonName {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  firstName: String!
+  lastName: String! 
+  middleInitial: String
+  suffix: String
+  fromDate: DateTime!
+  throughDate: DateTime
+  person: Person @relation( name: "NameOnPerson")
+}
+
+type PersonAvatar {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  person: Person! @relation(name: "AvatarOnPerson")
+  payload: String! 
+  fromDate: DateTime!
+  throughDate: DateTime
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+}
+
+type PartyPhone {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String! 
+  fromDate: DateTime!
+  throughDate: DateTime
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+}
+
+type PartyEmail {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String! 
+  fromDate: DateTime!
+  throughDate: DateTime
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+}
+
+type PartyAccount {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  cognitoId: String! @unique
+  name: String!
+  email: String
+  phone: String
+  phone_number_verified: Boolean! @default(value: false)
+  email_verified: Boolean! @default(value: false)
+  person: Person
+}
+
+type Organization {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  name: [OrganizationName!]! @relation(link: TABLE, name: "NameOnOrganization")
+  logo: [OrganizationLogo!]! @relation(link: TABLE, name: "LogoOnOrganization")
+  email: [PartyEmail!]! @relation(link: TABLE, name: "EmailOnOrganization")
+  phone: [PartyPhone!]! @relation(link: TABLE, name: "PhoneOnOrganization")
+  location: [OrganizationLocation!]! @relation(link: TABLE, name: "LocationOnOrganization")
+  links: [OrganizationLink!]!  @relation(link: TABLE, name: "LinkOnOrganization")
+  targetMarkets: [OrganizationTargetMarket!]! @relation(link: TABLE, name: "MarketsOnOrganization")
+  categories: [OrganizationCategory!]! @relation(link: TABLE, name: "CategoryOnOrganization")
+  metadata: OrganizationMetaData! @relation(link: INLINE, name: "MetaDataOnOrganization")
+  affiliation: [PersonOrganizationAffiliation!]! @relation(link: TABLE, name: "AffiliationOnOrganization")
+  context: [OrganizationContext!]!
+  yearFounded: DateTime
+  description: String
+  visible: Boolean
+}
+
+
+type OrganizationContext {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String
+  fromDate: DateTime!
+  throughDate: DateTime
+  type: OrganizationContextType!
+  metadata: OrganizationContextMetaData @relation(link: INLINE, name: "MetaDataOnOrganizationContext")
+
+}
+
+type OrganizationContextMetaData {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  organizationContext: OrganizationContext! @relation(name: "MetaDataOnOrganizationContext")
+  isDraft: Boolean! @default(value: true)
+  isPublic: Boolean! @default(value: false)
+  isRejected: Boolean! @default(value: false)
+  isUnverified: Boolean! @default(value: true)
+  isVerified: Boolean! @default(value: false)
+  isApproved: Boolean! @default(value: false)
+  isPendingReview: Boolean! @default(value: false)
+}
+
+
+enum OrganizationContextType {
+  Description
+  ShortDescription
+  FullDescription
+  YearFounded
+
+}
+
+type OrganizationMetaData {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  organization: Organization! @relation(name: "MetaDataOnOrganization")
+  isDraft: Boolean! @default(value: true)
+  isPublic: Boolean! @default(value: false)
+  isRejected: Boolean! @default(value: false)
+  isUnverified: Boolean! @default(value: true)
+  isVerified: Boolean! @default(value: false)
+  isApproved: Boolean! @default(value: false)
+  isPendingReview: Boolean! @default(value: false)
+}
+
+type OrganizationLogo {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  organization: Organization! @relation(name: "LogoOnOrganization")
+  payload: String! 
+  fromDate: DateTime!
+  throughDate: DateTime
+  isPrimary: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+  isDefault: Boolean @default(value: true)
+}
+
+type OrganizationName {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String!
+  fromDate: DateTime!
+  throughDate: DateTime
+  organization: Organization! @relation(name: "NameOnOrganization")
+}
+
+type OrganizationCategory {
+  id: ID! @unique @id
+  payload: String! @unique
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  parent: OrganizationCategory @relation(name: "ParentOnChildCategory")
+  children: [OrganizationCategory!]! @relation(name: "ChildrenOnParentCategory")
+  organizations: [Organization!]! @relation(name: "CategoryOnOrganization")
+}
+
+type OrganizationTargetMarket {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String! @unique
+  organizations: [Organization!]! @relation(name: "MarketsOnOrganization")
+}
+
+type OrganizationBusinessModel {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String! @unique
+  organizations: [Organization!]! @relation(name: "OperatingModelOnOrganization")
+}
+
+
+type OrganizationLink {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  type: OrganizationLinkType!
+  isHttps: Boolean @default(value: false)
+  isPublic: Boolean @default(value: true)
+  payload: String!
+  fromDate: DateTime!
+  throughDate: DateTime
+  organization: Organization! @relation(name: "LinkOnOrganization")
+}
+
+
+enum OrganizationLinkType {
+  UrlPrivacyPolicy
+  UrlSupport
+  UrlSales
+  UrlTermsOfService
+  UrlTwitter
+  UrlLinkedIn
+  UrlFacebook
+  UrlCrunchbase
+  UrlAngellist
+  UrlWebsite
+  EmailSales
+  EmailSupport
+  Other
+}
+
+
+type OrganizationLocation {
+  id: ID! @unique @id
+  isPrimary: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  organization: Organization! @relation(name: "LocationOnOrganization")
+  name: String
+  formatted_address: String
+  googleId: String
+  placeId: String
+  geometry: Json
+  photos: Json
+}
+
+
+type PersonOrganizationAffiliation {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  organization: Organization! @relation(name: "AffiliationOnOrganization")
+  person: Person! @relation(name: "AffiliationOnPerson")
+  fromDate: DateTime!
+  throughDate: DateTime
+  title: String
+  role: String
+  description: String
+  metadata: PersonOrganizationAffiliationMetaData @relation(link: INLINE, name: "MetaDataOnPersonOrganizationAffiliation")
+}
+
+type PersonOrganizationAffiliationMetaData {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  affiliation: PersonOrganizationAffiliation! @relation(name: "MetaDataOnPersonOrganizationAffiliation")
+  isDraft: Boolean! @default(value: true)
+  isPublic: Boolean! @default(value: false)
+  isRejected: Boolean! @default(value: false)
+  isUnverified: Boolean! @default(value: true)
+  isVerified: Boolean! @default(value: false)
+  isApproved: Boolean! @default(value: false)
+  isPendingReview: Boolean! @default(value: false)
+}
