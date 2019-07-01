@@ -6,3 +6,5 @@ telepresence.log
 aws
 .DS_Store
 legaltech.code-workspace
+error.log
+combined.log

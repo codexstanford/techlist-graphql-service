@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: graphql-service
-          image: 196309159802.dkr.ecr.us-west-2.amazonaws.com/techindex:latest
+          image: gcr.io/stanfordcodextextindex/scitapollo:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 4000
