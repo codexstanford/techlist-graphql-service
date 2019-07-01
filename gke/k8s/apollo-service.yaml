@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: graphql-service
+  labels: 
+    app: graphql-service
+spec:
+  ports:
+    - port: 4000
+      protocol: TCP
+      targetPort: 4000
+  selector: 
+    app: graphql-service

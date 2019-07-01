@@ -2,25 +2,21 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
-    "baseUrl": "./",
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "isolatedModules": true,
-    "lib": ["es2017", "esnext.asynciterable", "dom"],
+    "lib": ["esnext", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitThis": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "sourceMap": true,
     "strictFunctionTypes": true,
     "skipLibCheck": true,
     "target": "es6",
     "typeRoots": ["node_modules/@types"],
     "types": ["node"]
-  },
-  "exclude": ["node_modules"],
-  "files": ["src/index.ts"],
-  "include": ["src/**/*"]
+  }
 }

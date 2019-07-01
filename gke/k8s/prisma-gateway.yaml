@@ -24,6 +24,8 @@ spec:
   - prisma-gateway
   http:
   - match:
+    - uri: 
+        prefix: /prisma/*
     route:
     - destination:
         host: prisma
