@@ -407,7 +407,9 @@ const Query = prismaObjectType({
                 },
               },
             });
+            return result;
           }
+          return me;
 
           // const me = await ctx.prisma.user({
           //   cognitoId: user.sub,
