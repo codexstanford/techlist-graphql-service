@@ -28,6 +28,7 @@ spec:
                 port: 4466
                 # managementApiSecret: mysecret
                 enableManagementApi: true
+                queueSize: 5000
                 rabbitUri: "amqp://rabbit:RGXMNV4zxGYy@rabbitmq-1-rabbitmq-svc.default:5672"
                 databases:
                   default:
@@ -37,7 +38,7 @@ spec:
                     user: postgres
                     password: 5sabEOeGrg4IeKOa
                     migrations: true
-          image: prismagraphql/prisma:1.34
+          image: prismagraphql/prisma-prod:1.34
           name: prisma-master
           ports:
             - containerPort: 4466
