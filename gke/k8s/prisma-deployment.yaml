@@ -46,50 +46,50 @@ spec:
       restartPolicy: Always
 status: {}
 
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  labels:
-    name: prisma
-    app: prisma
-    stage: production 
-  name: prisma-slave
-spec: 
-  replicas: 0
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        name: prisma
-        app: prisma
-        stage: production 
-    spec:
-      containers: 
-        - env: 
-            - name: PRISMA_CONFIG
-              value: |
-                port: 4466
-                # managementApiSecret: mysecret
-                enableManagementApi: false
-                rabbitUri: "amqp://rabbit:RGXMNV4zxGYy@rabbitmq-1-rabbitmq-svc.default:5672"
-                databases:
-                  default:
-                    connector: postgres
-                    host: 10.28.128.5
-                    port: 5432
-                    user: postgres
-                    password: 5sabEOeGrg4IeKOa
-                    migrations: true
-          image: prismagraphql/prisma-prod:1.34
-          name: prisma-master
-          ports:
-            - containerPort: 4466
-          resources: {}
-      restartPolicy: Always
-status: {}
+# ---
+# apiVersion: extensions/v1beta1
+# kind: Deployment
+# metadata:
+#   labels:
+#     name: prisma
+#     app: prisma
+#     stage: production 
+#   name: prisma-slave
+# spec: 
+#   replicas: 0
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 0
+#   template:
+#     metadata:
+#       creationTimestamp: null
+#       labels:
+#         name: prisma
+#         app: prisma
+#         stage: production 
+#     spec:
+#       containers: 
+#         - env: 
+#             - name: PRISMA_CONFIG
+#               value: |
+#                 port: 4466
+#                 # managementApiSecret: mysecret
+#                 enableManagementApi: false
+#                 rabbitUri: "amqp://rabbit:RGXMNV4zxGYy@rabbitmq-1-rabbitmq-svc.default:5672"
+#                 databases:
+#                   default:
+#                     connector: postgres
+#                     host: 10.28.128.5
+#                     port: 5432
+#                     user: postgres
+#                     password: 5sabEOeGrg4IeKOa
+#                     migrations: true
+#           image: prismagraphql/prisma-prod:1.34
+#           name: prisma-master
+#           ports:
+#             - containerPort: 4466
+#           resources: {}
+#       restartPolicy: Always
+# status: {}
