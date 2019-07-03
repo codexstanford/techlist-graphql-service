@@ -28,11 +28,11 @@ spec:
                 port: 4466
                 # managementApiSecret: mysecret
                 enableManagementApi: true
-                queueSize: 5000
                 rabbitUri: "amqp://rabbit:RGXMNV4zxGYy@rabbitmq-1-rabbitmq-svc.default:5672"
                 databases:
                   default:
                     connector: postgres
+                    queueSize: 5000
                     host: 10.28.128.5
                     port: 5432
                     user: postgres
