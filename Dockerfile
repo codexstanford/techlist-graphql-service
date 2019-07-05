@@ -29,3 +29,12 @@ EXPOSE 4000 433
 # CMD [ "yarn", "start" ]
 
 CMD [ "pm2-runtime", "start", "pm2.json" ]
+
+# FROM node:11.4-alpine as builder
+# WORKDIR /usr/src/app
+# ENV PATH /usr/src/app/node_modules/.bin:$PATH
+# COPY package.json *.lock ./
+# RUN yarn --silent
+# RUN yarn global add nodemon --silent
+# COPY . ./
+# EXPOSE 4000

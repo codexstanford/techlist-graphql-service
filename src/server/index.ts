@@ -3,21 +3,19 @@ import cors from 'cors';
 import ProtectedApolloServer from './apollo';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import { mergeSchemas } from 'graphql-tools';
-import https from 'https';
+
 import http from 'http';
-import fs from 'fs';
-import { RedisCache } from 'apollo-server-cache-redis';
+
 import PrismaSchema from '../modules/prisma';
 import { config } from './config';
 import { prisma } from '../../generated/prisma-client';
 import { getUserId } from '../modules/prisma/utils';
+import bodyParser from 'body-parser';
 
 const WS_PORT = 5000;
 
 export const graphqlServer = new ProtectedApolloServer({
-  schema: mergeSchemas({
-    schemas: [PrismaSchema],
-  }),
+  schema: PrismaSchema,
 
   context: async (request) => {
     return {
@@ -33,6 +31,7 @@ export const graphqlServer = new ProtectedApolloServer({
     console.log('[ERROR:]', JSON.stringify(error));
     return error;
   },
+  debug: true,
 
   // cache: new RedisCache({
   //   host:
@@ -66,13 +65,16 @@ app.use(cors());
 
 app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 graphqlServer.applyMiddleware({ app, path: '/' });
 
 let server;
 
 server = http.createServer(app);
 
-graphqlServer.installSubscriptionHandlers(server);
+// graphqlServer.installSubscriptionHandlers(server);
 
 export const run = () => {
   server.listen({ port: config.port }, () => {

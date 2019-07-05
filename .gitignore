@@ -4,4 +4,7 @@ generated
 .env
 telepresence.log
 aws
-seed
+.DS_Store
+legaltech.code-workspace
+error.log
+combined.log
