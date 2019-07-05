@@ -3,6 +3,7 @@ import cors from 'cors';
 import ProtectedApolloServer from './apollo';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import { mergeSchemas } from 'graphql-tools';
+import { MemcachedCache } from 'apollo-server-cache-memcached';
 
 import http from 'http';
 
@@ -30,7 +31,14 @@ export const graphqlServer = new ProtectedApolloServer({
     console.log('[ERROR:]', JSON.stringify(error));
     return error;
   },
-  debug: true,
+  debug: config.environment === 'production' ? false : true,
+  cache:
+    config.environment === 'production'
+      ? new MemcachedCache(
+          ['memcached-1-memcached-svc.default.svc.cluster.local:11211'],
+          { retries: 10, retry: 1000 },
+        )
+      : new MemcachedCache(['0.0.0.0:11211'], { retries: 10, retry: 1000 }),
 
   // cache: new RedisCache({
   //   host:
@@ -39,23 +47,23 @@ export const graphqlServer = new ProtectedApolloServer({
   //       : `${process.env.REDIS_DEVELOPMENT}`,
   //   port: 6379,
   // }),
-  //   engine: {
-  //     apiKey: process.env.ENGINE_API_KEY,
-  //     generateClientInfo: ({ request }) => {
-  //       const headers = request.http && request.http.headers;
-  //       if (headers) {
-  //         return {
-  //           clientName: headers['apollo-client-name'],
-  //           clientVersion: headers['apollo-client-version'],
-  //         };
-  //       } else {
-  //         return {
-  //           clientName: 'Unknown Client',
-  //           clientVersion: 'Unversioned',
-  //         };
-  //       }
-  //     },
-  //   },
+  engine: {
+    apiKey: process.env.ENGINE_API_KEY,
+    generateClientInfo: ({ request }) => {
+      const headers = request.http && request.http.headers;
+      if (headers) {
+        return {
+          clientName: headers['apollo-client-name'],
+          clientVersion: headers['apollo-client-version'],
+        };
+      } else {
+        return {
+          clientName: 'Unknown Client',
+          clientVersion: 'Unversioned',
+        };
+      }
+    },
+  },
 });
 
 const app = express();

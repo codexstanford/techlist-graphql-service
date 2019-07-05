@@ -1,5 +1,5 @@
-# endpoint: http://10.0.11.126:4466/dev/one
-endpoint: http://localhost:4466/dev/one
+endpoint: http://10.0.11.126:4466/dev/one
+# endpoint: http://localhost:4466/dev/one
 
 datamodel: datamodel.prisma
 

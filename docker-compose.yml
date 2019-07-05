@@ -72,6 +72,14 @@ services:
   #   depends_on:
   #     - redis
   #     - prisma
+  memcache:
+    image: bitnami/memcached:latest
+    networks: 
+      - backend
+    restart: unless-stopped
+    hostname: memcache
+    ports:
+      - '11211:11211'
   redis:
     image: redis:alpine
     command: ["redis-server", "--appendonly", "yes"]
