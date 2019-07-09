@@ -44,13 +44,15 @@
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "build": "rimraf dist && tsc --project tsconfig.json",
-    "deploy": "npx prisma deploy",
+    "deploy": "npx prisma deploy --env-file ./.env.local",
+    "deploy:prod": "npx prisma deploy --env-file ./.env.production",
+    "migrate:prod": "npx prisma deploy --env-file ./.env.production && npx prisma reset --force --env-file ./.env.production && yarn importer && yarn dev",
     "dev": "ts-node-dev --no-notify --respawn --transpileOnly ./src",
     "kompose": "rimraf dist && rimraf node_modules && kompose up",
     "serve": "pm2-runtime start pm2.json",
     "importer:dev": "nodemon --exec yarn importer",
     "importer": "babel-node scripts/import.js",
-    "migrate": "npx prisma deploy && npx prisma reset --force && yarn importer && yarn dev",
+    "migrate": "npx prisma deploy --env-file ./.env.local && npx prisma reset --force --env-file ./.env.local && yarn importer && yarn dev",
     "start-service-accounts": "ts-node-dev --no-notify --respawn --transpileOnly src/new/prisma.ts",
     "start-services": "concurrently \"npm:start-service-*\""
   },

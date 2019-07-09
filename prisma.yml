@@ -1,15 +1,20 @@
-endpoint: http://10.0.11.126:4466/dev/one
+# endpoint: http://10.0.11.126:4466/dev/one
 # endpoint: http://localhost:4466/dev/one
+
+
+endpoint: ${env:PRISMA_ENDPOINT}
 
 datamodel: datamodel.prisma
 
 generate:
-  - generator: typescript-client
+  - generator: typescript-client 
     output: ./generated/prisma-client/
+  - generator: graphql-schema
+    output: ./generated/prisma.graphql
   - generator: javascript-client
     output: ./generated/prisma-client-js/
 hooks:
   post-deploy:
-    - prisma generate
+    - prisma generate --env-file ${env:ENV_FILE}
     - npx nexus-prisma-generate --client ./generated/prisma-client --output ./generated/nexus-prisma
 
