@@ -21,7 +21,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - "scti.ok8s.net"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -29,13 +29,13 @@ metadata:
   name: prisma
 spec:
   hosts:
-  - "*"
+  - "scti.ok8s.net"
   gateways:
   - prisma-gateway
   http:
   - match:
     - uri: 
-        prefix: /prisma/*
+        prefix: /prisma
     route:
     - destination:
         host: prisma

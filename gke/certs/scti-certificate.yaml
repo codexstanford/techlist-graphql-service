@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: scti-certificate
+spec:
+  domains:
+    - scti.ok8s.net

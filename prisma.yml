@@ -15,6 +15,6 @@ generate:
     output: ./generated/prisma-client-js/
 hooks:
   post-deploy:
-    - prisma generate --env-file ${env:ENV_FILE}
+    - prisma generate --env-file ${env:PRISMA_ENV_FILE}
     - npx nexus-prisma-generate --client ./generated/prisma-client --output ./generated/nexus-prisma
 
