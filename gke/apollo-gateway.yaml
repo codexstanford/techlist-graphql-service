@@ -11,8 +11,6 @@ spec:
   - match:
       - uri: 
           exact: /apollo
-      - uri: 
-          exact: /
     route:
     - destination:
         host: graphql-service
