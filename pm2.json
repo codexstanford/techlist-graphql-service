@@ -6,10 +6,12 @@
       "instances": 0,
       "exec_mode": "cluster",
       "env": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "PRISMA_ENDPOINT": "http://10.0.11.126:4466/dev/one"
       },
       "env_production": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "PRISMA_ENDPOINT": "http://10.0.11.126:4466/dev/one"
       }
     }
   ]

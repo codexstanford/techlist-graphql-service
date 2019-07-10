@@ -8,3 +8,5 @@ aws
 legaltech.code-workspace
 error.log
 combined.log
+.env.local
+.env.production

@@ -4,13 +4,15 @@ metadata:
   name: graphql-service
 spec:
   hosts:
-  - "*"
+  - "scti.ok8s.net"
   gateways:
   - prisma-gateway
   http:
   - match:
       - uri: 
-          prefix: /apollo
+          exact: /apollo
+      - uri: 
+          exact: /
     route:
     - destination:
         host: graphql-service

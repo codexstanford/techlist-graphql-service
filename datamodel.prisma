@@ -84,14 +84,35 @@ type PartyAccount {
   phone_number_verified: Boolean! @default(value: false)
   email_verified: Boolean! @default(value: false)
   person: Person
+  admin: [Organization!]! @relation(name: "AdminsOnOrganization" )
+  roles: [PartyRole!]!  @relation(link: TABLE, name: "PartyRoleOnParty")
+}
+
+type PartyRole {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  fromDate: DateTime!
+  throughDate: DateTime
+  roleType: PartyRoleType!
+  party: PartyAccount! @relation(name: "PartyRoleOnParty")
+  resource: Organization! @relation(name: "PartyRoleOnOrganization")
+  
+}
+
+type PartyRoleType {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  payload: String! @unique
 }
 
 type Organization {
   id: ID! @unique @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  name: [OrganizationName!]! @relation(link: TABLE, name: "NameOnOrganization")
-  logo: [OrganizationLogo!]! @relation(link: TABLE, name: "LogoOnOrganization")
+  name: [OrganizationName!]! @relation(name: "NameOnOrganization")
+  logo: [OrganizationLogo!]! @relation(name: "LogoOnOrganization")
   email: [PartyEmail!]! @relation(link: TABLE, name: "EmailOnOrganization")
   phone: [PartyPhone!]! @relation(link: TABLE, name: "PhoneOnOrganization")
   location: [OrganizationLocation!]! @relation(link: TABLE, name: "LocationOnOrganization")
@@ -104,6 +125,8 @@ type Organization {
   yearFounded: DateTime
   description: String
   visible: Boolean
+  admins: [PartyAccount!]! @relation(link: TABLE, name: "AdminsOnOrganization")
+  parties: [PartyRole!]!  @relation(link: TABLE, name: "PartyRoleOnOrganization")
 }
 
 
@@ -160,7 +183,7 @@ type OrganizationLogo {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  organization: Organization! @relation(name: "LogoOnOrganization")
+  organization: Organization! @relation(link: INLINE, name: "LogoOnOrganization")
   payload: String! 
   fromDate: DateTime!
   throughDate: DateTime
@@ -176,7 +199,7 @@ type OrganizationName {
   payload: String!
   fromDate: DateTime!
   throughDate: DateTime
-  organization: Organization! @relation(name: "NameOnOrganization")
+  organization: Organization! @relation(link: INLINE, name: "NameOnOrganization")
 }
 
 type OrganizationCategory {
