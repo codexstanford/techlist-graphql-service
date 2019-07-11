@@ -1,5 +1,5 @@
 type Person {
-  id: ID! @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   name: [PersonName!]! @relation(link: TABLE, name: "NameOnPerson")
@@ -8,12 +8,12 @@ type Person {
   phone: [PartyPhone!]! @relation(link: TABLE, name: "PhoneOnPerson")
   affiliation: [PersonOrganizationAffiliation!]! @relation(link: TABLE, name: "AffiliationOnPerson")
   personalTitle: String
-  account: PartyAccount @relation(link: INLINE) 
+  account: PartyAccount @relation(link: INLINE, name: "AccountOnPerson") 
   metadata: PersonMetaData! @relation(link: INLINE, name: "MetaDataOnPerson")
 }
 
 type PersonMetaData {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   person: Person! @relation(name: "MetaDataOnPerson")
@@ -27,7 +27,7 @@ type PersonMetaData {
 }
 
 type PersonName {
-  id: ID! @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   firstName: String!
@@ -40,7 +40,7 @@ type PersonName {
 }
 
 type PersonAvatar {
-  id: ID! @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   person: Person! @relation(name: "AvatarOnPerson")
@@ -52,7 +52,7 @@ type PersonAvatar {
 }
 
 type PartyPhone {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String! 
@@ -63,7 +63,7 @@ type PartyPhone {
 }
 
 type PartyEmail {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String! 
@@ -74,7 +74,7 @@ type PartyEmail {
 }
 
 type PartyAccount {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   cognitoId: String! @unique
@@ -83,13 +83,13 @@ type PartyAccount {
   phone: String
   phone_number_verified: Boolean! @default(value: false)
   email_verified: Boolean! @default(value: false)
-  person: Person
+  person: Person @relation(name: "AccountOnPerson")
   admin: [Organization!]! @relation(name: "AdminsOnOrganization" )
   roles: [PartyRole!]!  @relation(link: TABLE, name: "PartyRoleOnParty")
 }
 
 type PartyRole {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   fromDate: DateTime!
@@ -101,14 +101,14 @@ type PartyRole {
 }
 
 type PartyRoleType {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String! @unique
 }
 
 type Organization {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   name: [OrganizationName!]! @relation(name: "NameOnOrganization")
@@ -131,7 +131,7 @@ type Organization {
 
 
 type OrganizationContext {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String
@@ -143,7 +143,7 @@ type OrganizationContext {
 }
 
 type OrganizationContextMetaData {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   organizationContext: OrganizationContext! @relation(name: "MetaDataOnOrganizationContext")
@@ -166,7 +166,7 @@ enum OrganizationContextType {
 }
 
 type OrganizationMetaData {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   organization: Organization! @relation(name: "MetaDataOnOrganization")
@@ -180,7 +180,7 @@ type OrganizationMetaData {
 }
 
 type OrganizationLogo {
-  id: ID! @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   organization: Organization! @relation(link: INLINE, name: "LogoOnOrganization")
@@ -193,7 +193,7 @@ type OrganizationLogo {
 }
 
 type OrganizationName {
-  id: ID! @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String!
@@ -203,7 +203,7 @@ type OrganizationName {
 }
 
 type OrganizationCategory {
-  id: ID! @unique @id
+  id: ID! @unique
   payload: String! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -213,7 +213,7 @@ type OrganizationCategory {
 }
 
 type OrganizationTargetMarket {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String! @unique
@@ -221,7 +221,7 @@ type OrganizationTargetMarket {
 }
 
 type OrganizationBusinessModel {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   payload: String! @unique
@@ -230,7 +230,7 @@ type OrganizationBusinessModel {
 
 
 type OrganizationLink {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   type: OrganizationLinkType!
@@ -261,7 +261,7 @@ enum OrganizationLinkType {
 
 
 type OrganizationLocation {
-  id: ID! @unique @id
+  id: ID! @unique
   isPrimary: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -276,7 +276,7 @@ type OrganizationLocation {
 
 
 type PersonOrganizationAffiliation {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   organization: Organization! @relation(name: "AffiliationOnOrganization")
@@ -290,7 +290,7 @@ type PersonOrganizationAffiliation {
 }
 
 type PersonOrganizationAffiliationMetaData {
-  id: ID! @unique @id
+  id: ID! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   affiliation: PersonOrganizationAffiliation! @relation(name: "MetaDataOnPersonOrganizationAffiliation")
