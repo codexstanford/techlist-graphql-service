@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "ts-node ./src/index.ts",
-    "build": "rimraf dist && tsc --project tsconfig.json",
+    "build": "rm -rf dist && tsc --project tsconfig.json",
     "deploy": "npx prisma deploy --env-file ./.env.local",
     "deploy:prod": "npx prisma deploy --env-file ./.env.production",
     "migrate:prod": "npx prisma deploy --force --env-file ./.env.production && npx prisma reset --force --env-file ./.env.production && yarn importer && yarn dev",
