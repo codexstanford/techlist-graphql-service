@@ -1,32 +1,82 @@
 import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
-import ProtectedApolloServer from './apollo';
-import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
+import compression from 'compression';
+import session from 'express-session';
+import bodyParser from 'body-parser';
 import { MemcachedCache } from 'apollo-server-cache-memcached';
 import http from 'http';
 import PrismaSchema from '../modules/prisma';
 import { config } from './config';
 import { prisma } from '../../generated/prisma-client';
 import { getUserId } from '../modules/prisma/utils';
-import bodyParser from 'body-parser';
+import responseCachePlugin from 'apollo-server-plugin-response-cache';
+const logger = require('morgan');
+
+const MemcachedStore = require('connect-memcached')(session);
+
+const app = express();
+app.use(cors());
+app.use(compression());
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+const store =
+  config.environment === 'production'
+    ? new MemcachedStore({
+        hosts: ['memcached-1-memcached-svc.default.svc.cluster.local:11211'],
+        retries: 10,
+        retry: 1000,
+      })
+    : new MemcachedStore({
+        hosts: ['0.0.0.0:11211'],
+        retries: 10,
+        retry: 1000,
+      });
+
+app.use(
+  session({
+    secret: 'csti',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 60000,
+      secure: config.environment === 'production' ? false : false,
+    },
+    store,
+  }),
+);
 
 const WS_PORT = 5000;
 
-export const graphqlServer = new ProtectedApolloServer({
+const test = responseCachePlugin({
+  cache:
+    config.environment === 'production'
+      ? new MemcachedCache(
+          ['memcached-1-memcached-svc.default.svc.cluster.local:11211'],
+          { retries: 10, retry: 1000 },
+        )
+      : new MemcachedCache(['0.0.0.0:11211'], { retries: 10, retry: 1000 }),
+}) as any;
+
+export const graphqlServer = new ApolloServer({
   schema: PrismaSchema,
   context: async (request) => {
     return {
-      ...request,
       prisma,
       user: await getUserId(request),
+      metrics: {},
+      ...request,
     };
   },
   introspection: true,
   tracing: true,
   cacheControl: {
-    defaultMaxAge: 5,
+    defaultMaxAge: 60000,
+    calculateHttpHeaders: true,
   },
-
+  plugins: [test],
   persistedQueries: {
     cache:
       config.environment === 'production'
@@ -67,25 +117,12 @@ export const graphqlServer = new ProtectedApolloServer({
   },
 });
 
-const app = express();
-
-app.use(cors());
-
-app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
-
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
 graphqlServer.applyMiddleware({ app, path: '/' });
-
-let server;
-
-server = http.createServer(app);
 
 // graphqlServer.installSubscriptionHandlers(server);
 
 export const run = () => {
-  server.listen({ port: config.port }, () => {
+  app.listen({ port: config.port }, () => {
     console.log(
       `🚀 Server ready at`,
       `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
