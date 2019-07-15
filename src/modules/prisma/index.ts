@@ -15,20 +15,20 @@ export const schema = applyMiddleware(
       client: prisma,
     },
     outputs: {
-      schema: path.join(__dirname, '../../../generated/schema.graphql'),
-      typegen: path.join(__dirname, '../../../generated/nexus'),
+      schema: __dirname + 'generated/schema.graphql',
+      typegen: __dirname + 'generated/nexus',
     },
     typegenAutoConfig: {
       sources: [
         {
           source: path.join(__dirname, './types.ts'),
-          alias: 'types',
+          alias: 't',
         },
       ],
-      contextType: 'types.Context',
+      contextType: 't.Context',
+      debug: true,
     },
   }),
-  permissions,
 );
 
 export default schema;
