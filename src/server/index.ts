@@ -33,7 +33,7 @@ app.use(
   bodyParser.urlencoded({ extended: true, limit: '10mb' }),
 );
 
-!isProduction && app.use(logger('dev'));
+// !isProduction && app.use(logger('dev'));
 
 export const graphqlServer = new ApolloServer({
   schema: PrismaSchema,

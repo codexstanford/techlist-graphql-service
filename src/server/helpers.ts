@@ -113,7 +113,7 @@ export function getDistributedStore() {
 
 export function getPersistedQueriesConfig() {
   return {
-    cache: getDistributedStore(),
+    cache: getDistributedCache(),
   };
 }
 
