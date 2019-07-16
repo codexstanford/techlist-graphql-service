@@ -38,7 +38,7 @@ export const graphqlServer = new ApolloServer({
   context: (req) => getApolloResolverContext(req),
   introspection: !isProduction,
   tracing: true,
-  plugins: [responseCachePlugin(getResponseCacheConfig())],
+  // plugins: [responseCachePlugin(getResponseCacheConfig())],
   cacheControl: getCacheControlConfig(),
   persistedQueries: getPersistedQueriesConfig(),
   formatError: (err) => getErrorFormatter(err),
