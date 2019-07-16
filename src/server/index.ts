@@ -8,9 +8,11 @@ import { config } from './config';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
 import 'apollo-cache-control';
 import logger from 'morgan';
+
 import {
   getServerSessionConfig,
   getResponseCacheConfig,
+  getDistributedCache,
   getCacheControlConfig,
   getErrorFormatter,
   getEngineConfig,
@@ -38,12 +40,12 @@ export const graphqlServer = new ApolloServer({
   context: (req) => getApolloResolverContext(req),
   introspection: !isProduction,
   tracing: true,
-  // plugins: [responseCachePlugin(getResponseCacheConfig())],
+  plugins: [responseCachePlugin(getResponseCacheConfig())],
   cacheControl: getCacheControlConfig(),
   persistedQueries: getPersistedQueriesConfig(),
   formatError: (err) => getErrorFormatter(err),
   debug: !isProduction,
-  cache: getDistributedStore(),
+  cache: getDistributedCache(),
   engine: getEngineConfig(),
 });
 

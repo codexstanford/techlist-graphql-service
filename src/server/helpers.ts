@@ -5,9 +5,11 @@ import { prisma } from '../../generated/prisma-client';
 import express from 'express';
 import session from 'express-session';
 import { CORS_WHITELIST } from './const';
-const MemcachedStore = require('connect-memcached')(session);
+import { MemcachedCache } from 'apollo-server-cache-memcached';
 
 export const isProduction = config.environment === 'production';
+
+const MemcachedStore = require('connect-memcached')(session);
 
 export function getServerSessionConfig(store) {
   return {
@@ -40,6 +42,17 @@ export function getResponseCacheConfig() {
       return true;
     },
   };
+}
+
+export function getDistributedCache() {
+  return new MemcachedCache(
+    [
+      isProduction
+        ? 'memcached-1-memcached-svc.default.svc.cluster.local:11211'
+        : '0.0.0.0:11211',
+    ],
+    { retries: 10, retry: 1000 },
+  );
 }
 
 interface ExpressContextWithSession extends express.Request {
@@ -84,21 +97,17 @@ export function getCacheControlConfig() {
 }
 
 export function getErrorFormatter(err) {
-  // console.log('[ERROR:]', JSON.stringify(error));
+  console.log('[ERROR:]', JSON.stringify(err));
   return err;
 }
 
 export function getDistributedStore() {
   return new MemcachedStore({
     hosts: [
-      `${
-        isProduction
-          ? 'memcached-1-memcached-svc.default.svc.cluster.local:11211'
-          : '0.0.0.0:11211'
-      }`,
+      isProduction
+        ? 'memcached-1-memcached-svc.default.svc.cluster.local:11211'
+        : '0.0.0.0:11211',
     ],
-    retries: 10,
-    retry: 1000,
   });
 }
 
@@ -112,7 +121,8 @@ export function getOrigin(origin, callback) {
   if (CORS_WHITELIST.indexOf(origin) !== -1) {
     callback(null, true);
   } else {
-    callback(new Error('Not allowed by CORS'));
+    callback(null, true);
+    // callback(new Error('Not allowed by CORS'));
   }
 }
 
@@ -120,7 +130,7 @@ export function getApolloMiddlewareConfig() {
   return {
     path: '/',
     cors: {
-      origin: getOrigin,
+      origin: (origin, callback) => getOrigin(origin, callback),
       credentials: true,
     },
     bodyParserConfig: {

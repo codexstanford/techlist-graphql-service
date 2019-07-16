@@ -3,6 +3,7 @@ export const CORS_WHITELIST = [
   'https://law.haus',
   'http://law.haus',
   'localhost:4000',
+  'localhost',
 ];
 
 export const WS_PORT = 5000;
