@@ -6,6 +6,7 @@ import express from 'express';
 import session from 'express-session';
 import { CORS_WHITELIST } from './const';
 import { MemcachedCache } from 'apollo-server-cache-memcached';
+import PubSubAPI from '../services/pubsub';
 
 export const isProduction = config.environment === 'production';
 
@@ -63,6 +64,9 @@ export async function getApolloResolverContext(request) {
   const req: ExpressContextWithSession = request.req;
   return {
     user: await getUserId(request),
+    pubsub: new PubSubAPI({
+      projectId: 'stanfordcodextextindex',
+    }),
     prisma,
     session: req.session,
     sessionID: req.session.id,

@@ -3,6 +3,54 @@ import { prismaObjectType } from 'nexus-prisma';
 export const Mutation = prismaObjectType({
   name: 'Mutation',
   definition(t) {
-    t.prismaFields(['*']);
+    t.prismaFields([
+      {
+        name: 'updatePartyAccount',
+        alias: 'oldUpdatePartyAccount',
+      },
+      {
+        name: 'createOrganization',
+        alias: 'oldCreateOrganization',
+      },
+    ]);
+    t.field('updatePartyAccount', {
+      ...t.prismaType.updatePartyAccount,
+      resolve: async (root, args, ctx) => {
+        try {
+          return await ctx.prisma.updatePartyAccount(args);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
+
+    t.field('createOrganization', {
+      type: 'Organization',
+      args: { data: 'OrganizationCreateInput' },
+      resolve: async (root, args, ctx) => {
+        try {
+          const result = await ctx.prisma.createOrganization(
+            Object.assign({}, args.data, {
+              metadata: {
+                create: {
+                  isDraft: false,
+                  isPublic: false,
+                  isUnverified: false,
+                  isApproved: false,
+                  isPendingReview: true,
+                },
+              },
+            }),
+          );
+          const psr = await ctx.pubsub.publish({
+            topic: 'newuser',
+            message: result,
+          });
+          return result;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
   },
 });

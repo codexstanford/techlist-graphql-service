@@ -18,16 +18,16 @@ export const schema = applyMiddleware(
       schema: path.join(__dirname, '../../generated/schema.graphql'),
       typegen: path.join(__dirname, '../../generated/nexus'),
     },
-    typegenAutoConfig: {
-      sources: [
-        {
-          source: path.join(__dirname, './types.ts'),
-          alias: 't',
-        },
-      ],
-      contextType: 't.Context',
-      debug: true,
-    },
+    // typegenAutoConfig: {
+    //   sources: [
+    //     {
+    //       source: path.join(__dirname, './types.ts'),
+    //       alias: 't',
+    //     },
+    //   ],
+    //   contextType: 't.Context',
+    //   debug: true,
+    // },
   }),
 );
 
