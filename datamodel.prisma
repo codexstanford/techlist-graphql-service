@@ -78,6 +78,7 @@ type PartyAccount {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   cognitoId: String! @unique
+  handle: String! @unique
   name: String!
   email: String
   phone: String

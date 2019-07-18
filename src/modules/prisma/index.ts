@@ -15,8 +15,8 @@ export const schema = applyMiddleware(
       client: prisma,
     },
     outputs: {
-      schema: __dirname + 'generated/schema.graphql',
-      typegen: __dirname + 'generated/nexus',
+      schema: path.join(__dirname, '../../generated/schema.graphql'),
+      typegen: path.join(__dirname, '../../generated/nexus'),
     },
     typegenAutoConfig: {
       sources: [
