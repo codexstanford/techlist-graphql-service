@@ -7,7 +7,6 @@ import PrismaSchema from '../modules/prisma';
 import { config } from './config';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
 import 'apollo-cache-control';
-import logger from 'morgan';
 
 import {
   getServerSessionConfig,
@@ -33,12 +32,10 @@ app.use(
   bodyParser.urlencoded({ extended: true, limit: '10mb' }),
 );
 
-// !isProduction && app.use(logger('dev'));
-
 export const graphqlServer = new ApolloServer({
   schema: PrismaSchema,
   context: (req) => getApolloResolverContext(req),
-  introspection: !isProduction,
+  introspection: true,
   tracing: true,
   plugins: [responseCachePlugin(getResponseCacheConfig())],
   cacheControl: getCacheControlConfig(),

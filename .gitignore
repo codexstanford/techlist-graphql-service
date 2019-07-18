@@ -12,3 +12,4 @@ combined.log
 .env.production
 gcp-dns-admin.json
 local
+pubsubcred.json
