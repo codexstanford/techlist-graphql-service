@@ -12,6 +12,10 @@ export const Mutation = prismaObjectType({
         name: 'createOrganization',
         alias: 'oldCreateOrganization',
       },
+      // {
+      //   name: 'deleteOrganization',
+      //   alias: 'oldDeleteOrganization',
+      // },
     ]);
     t.field('updatePartyAccount', {
       ...t.prismaType.updatePartyAccount,
@@ -46,6 +50,23 @@ export const Mutation = prismaObjectType({
             topic: 'newuser',
             message: result,
           });
+          return result;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
+
+    t.field('deleteOrganization', {
+      type: 'Organization',
+      args: { where: 'OrganizationWhereUniqueInput' },
+      resolve: async (root, args, ctx, info) => {
+        try {
+          const result = await ctx.prisma.deleteOrganization(
+            { id: args.where.id },
+            info,
+          );
+
           return result;
         } catch (err) {
           console.log(err);

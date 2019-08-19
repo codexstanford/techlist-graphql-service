@@ -112,16 +112,16 @@ type Organization {
   id: ID! @unique @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  name: [OrganizationName!]! @relation(name: "NameOnOrganization")
-  logo: [OrganizationLogo!]! @relation(name: "LogoOnOrganization")
+  name: [OrganizationName!]! @relation(name: "NameOnOrganization", onDelete: CASCADE)
+  logo: [OrganizationLogo!]! @relation(name: "LogoOnOrganization", onDelete: CASCADE)
   email: [PartyEmail!]! @relation(link: TABLE, name: "EmailOnOrganization")
   phone: [PartyPhone!]! @relation(link: TABLE, name: "PhoneOnOrganization")
-  location: [OrganizationLocation!]! @relation(link: TABLE, name: "LocationOnOrganization")
-  links: [OrganizationLink!]!  @relation(link: TABLE, name: "LinkOnOrganization")
-  targetMarkets: [OrganizationTargetMarket!]! @relation(link: TABLE, name: "MarketsOnOrganization")
-  categories: [OrganizationCategory!]! @relation(link: TABLE, name: "CategoryOnOrganization")
-  metadata: OrganizationMetaData! @relation(link: INLINE, name: "MetaDataOnOrganization")
-  affiliation: [PersonOrganizationAffiliation!]! @relation(link: TABLE, name: "AffiliationOnOrganization")
+  location: [OrganizationLocation!]! @relation(link: TABLE, name: "LocationOnOrganization", onDelete: CASCADE)
+  links: [OrganizationLink!]!  @relation(link: TABLE, name: "LinkOnOrganization", onDelete: CASCADE)
+  targetMarkets: [OrganizationTargetMarket!]! @relation(link: TABLE, name: "MarketsOnOrganization", onDelete: CASCADE)
+  categories: [OrganizationCategory!]! @relation(link: TABLE, name: "CategoryOnOrganization", onDelete: CASCADE)
+  metadata: OrganizationMetaData! @relation(link: INLINE, name: "MetaDataOnOrganization", onDelete: CASCADE)
+  affiliation: [PersonOrganizationAffiliation!]! @relation(link: TABLE, name: "AffiliationOnOrganization", onDelete: CASCADE)
   context: [OrganizationContext!]!
   yearFounded: DateTime
   description: String
