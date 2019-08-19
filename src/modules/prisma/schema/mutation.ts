@@ -73,5 +73,16 @@ export const Mutation = prismaObjectType({
         }
       },
     });
+
+    t.field('updateOrganization', {
+      ...t.prismaType.updateOrganization,
+      resolve: async (root, args, ctx) => {
+        try {
+          return await ctx.prisma.updateOrganization(args);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
   },
 });
