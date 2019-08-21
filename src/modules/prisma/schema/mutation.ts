@@ -1,5 +1,6 @@
 import { prismaObjectType } from 'nexus-prisma';
 
+// @ts-ignore ignores error on line below that caused everything to have red underlines, code works
 export const Mutation = prismaObjectType({
   name: 'Mutation',
   definition(t) {
@@ -12,10 +13,6 @@ export const Mutation = prismaObjectType({
         name: 'createOrganization',
         alias: 'oldCreateOrganization',
       },
-      // {
-      //   name: 'deleteOrganization',
-      //   alias: 'oldDeleteOrganization',
-      // },
     ]);
     t.field('updatePartyAccount', {
       ...t.prismaType.updatePartyAccount,
@@ -58,8 +55,7 @@ export const Mutation = prismaObjectType({
     });
 
     t.field('deleteOrganization', {
-      type: 'Organization',
-      args: { where: 'OrganizationWhereUniqueInput' },
+      ...t.prismaType.deleteOrganization,
       resolve: async (root, args, ctx, info) => {
         try {
           const result = await ctx.prisma.deleteOrganization(
@@ -79,6 +75,22 @@ export const Mutation = prismaObjectType({
       resolve: async (root, args, ctx) => {
         try {
           return await ctx.prisma.updateOrganization(args);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
+
+    t.field('deleteAffiliation', {
+      ...t.prismaType.deletePersonOrganizationAffiliation,
+      resolve: async (root, args, ctx, info) => {
+        try {
+          const result = await ctx.prisma.deletePersonOrganizationAffiliation(
+            { id: args.where.id },
+            info,
+          );
+
+          return result;
         } catch (err) {
           console.log(err);
         }

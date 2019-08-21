@@ -287,7 +287,7 @@ type PersonOrganizationAffiliation {
   title: String
   role: String
   description: String
-  metadata: PersonOrganizationAffiliationMetaData @relation(link: INLINE, name: "MetaDataOnPersonOrganizationAffiliation")
+  metadata: PersonOrganizationAffiliationMetaData @relation(link: INLINE, name: "MetaDataOnPersonOrganizationAffiliation", onDelete: CASCADE)
 }
 
 type PersonOrganizationAffiliationMetaData {
