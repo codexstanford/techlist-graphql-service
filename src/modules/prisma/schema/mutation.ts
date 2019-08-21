@@ -96,5 +96,16 @@ export const Mutation = prismaObjectType({
         }
       },
     });
+
+    t.field('updateAffiliation', {
+      ...t.prismaType.updatePersonOrganizationAffiliation,
+      resolve: async (root, args, ctx) => {
+        try {
+          return await ctx.prisma.updatePersonOrganizationAffiliation(args);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
   },
 });
