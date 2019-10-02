@@ -107,5 +107,34 @@ export const Mutation = prismaObjectType({
         }
       },
     });
+
+    t.field('createAffiliation', {
+      ...t.prismaType.createPersonOrganizationAffiliation,
+      args: { data: 'PersonOrganizationAffiliationCreateInput' },
+      resolve: async (root, args, ctx) => {
+        try {
+          const result = await ctx.prisma.createPersonOrganizationAffiliation(
+            Object.assign({}, args.data, {
+              metadata: {
+                create: {
+                  isDraft: false,
+                  isPublic: false,
+                  isUnverified: false,
+                  isApproved: false,
+                  isPendingReview: true,
+                },
+              },
+            }),
+          );
+          const psr = await ctx.pubsub.publish({
+            topic: 'newaffiliation',
+            message: result,
+          });
+          return result;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
   },
 });

@@ -280,7 +280,7 @@ type PersonOrganizationAffiliation {
   id: ID! @unique @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  organization: Organization! @relation(name: "AffiliationOnOrganization")
+  organization: Organization @relation(name: "AffiliationOnOrganization")
   person: Person! @relation(name: "AffiliationOnPerson")
   fromDate: DateTime!
   throughDate: DateTime
