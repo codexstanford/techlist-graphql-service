@@ -25,6 +25,17 @@ export const Mutation = prismaObjectType({
       },
     });
 
+    t.field('updatePerson', {
+      ...t.prismaType.updatePerson,
+      resolve: async (root, args, ctx) => {
+        try {
+          return await ctx.prisma.updatePerson(args);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    });
+
     t.field('createOrganization', {
       type: 'Organization',
       args: { data: 'OrganizationCreateInput' },
