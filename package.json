@@ -16,7 +16,7 @@
     "apollo-server-cache-memcached": "^0.5.0",
     "apollo-server-express": "^2.7.0",
     "apollo-server-plugin-response-cache": "^0.3.0",
-    "aws-sdk": "^2.427.0",
+    "aws-sdk": "^2.814.0",
     "bluebird": "^3.5.3",
     "compression": "^1.7.4",
     "connect-memcached": "^1.0.0",
